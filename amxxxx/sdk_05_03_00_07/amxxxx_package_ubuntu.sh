@@ -43,37 +43,10 @@ cd "release_temp/${DATE}"
 prompt
 binary
 ls
-mget ${KERNEL_FILE_NAME}.tgz
-mget ${MODULES_FILE_NAME}.tgz
 mget ${SDKIMG_FILE_NAME}.tgz
 close
 quit
 EOF
-    # Kernel & DTB
-    tar zxf ${KERNEL_FILE_NAME}.tgz
-    rm ${KERNEL_FILE_NAME}.tgz
-
-    mkdir ./boot
-    mv ${MISC_FILE_NAME}/zImage--*.* ./boot/
-    mv ${MISC_FILE_NAME}/zImage ./boot/
-    mv ${MISC_FILE_NAME}/zImage-${CPU_TYPE}-${MACHINE}.dtb ./boot/${CPU_TYPE}-${MACHINE}.dtb
-    CURR=$PWD
-	cd ${MISC_FILE_NAME}
-	for dtb in `ls zImage-${CPU_TYPE}-${MACHINE}*.dtb`
-    do
-        dtb_new=`echo $dtb | sed 's/zImage-//g'`
-        mv $dtb ../boot/$dtb_new
-    done
-	cd $CURR
-
-    # Modules
-    tar zxf ${MODULES_FILE_NAME}.tgz
-    rm ${MODULES_FILE_NAME}.tgz
-
-    for MODULE_TARBALL in ${MISC_FILE_NAME}/modules--*.tgz
-    do
-        tar zxf ${MODULE_TARBALL}
-    done
 
     # SDK
     tar zxf ${SDKIMG_FILE_NAME}.tgz
@@ -82,6 +55,20 @@ EOF
     mkdir ./ti-sdk-004
     tar Jxf ${MISC_FILE_NAME}/processor-sdk-linux-image-*.tar.xz -C ti-sdk-004
     rm ${MISC_FILE_NAME}/processor-sdk-linux-image-*.tar.xz
+
+    # Kernel & Modules
+    CURR=$PWD
+    mkdir ./lib
+    mkdir ./boot
+    cd ti-sdk-004/filesystem
+    mkdir rootfs_temp
+    tar -xJf arago-base-tisdk-image-*.tar.xz -C rootfs_temp
+    mv rootfs_temp/boot/* $CURR/boot/
+    mv rootfs_temp/lib/modules/ $CURR/lib
+    sync
+    rm -r rootfs_temp
+    cd $CURR
+
 }
 
 function generate_md5()
