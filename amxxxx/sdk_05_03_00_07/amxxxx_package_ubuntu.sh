@@ -37,9 +37,9 @@ function get_misc_image()
     MODULES_FILE_NAME="${MISC_FILE_NAME}_modules"
     SDKIMG_FILE_NAME="${MISC_FILE_NAME}_sdkimg"
 
-    pftp -v -n ${FTP_SITE} <<-EOF
-user "ftpuser" "P@ssw0rd"
-cd "officialbuild/${FTP_DIR}/${DATE}"
+    pftp -v -n ${FTP_SITE_TEMP} <<-EOF
+user "zhengguang" "123321123"
+cd "release_temp/${DATE}"
 prompt
 binary
 ls
